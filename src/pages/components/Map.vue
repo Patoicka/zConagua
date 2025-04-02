@@ -9,7 +9,6 @@ import { onMounted, ref, nextTick, watch } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-// Props recibidos para el tipo de problema
 const props = defineProps({
     selectedProblem: {
         type: String,
@@ -17,11 +16,11 @@ const props = defineProps({
     },
     lat: {
         type: String,
-        default: '19.432608', // Valor por defecto si lat no se pasa
+        default: '19.432608', 
     },
     lng: {
         type: String,
-        default: '-99.133209', // Valor por defecto si lng no se pasa
+        default: '-99.133209',
     }
 });
 
@@ -31,7 +30,6 @@ const map = ref(null);
 const marker = ref(null);
 const mexicoPolygon = ref(null);
 
-// Función para determinar si la ubicación está dentro de México
 const isInsideMexico = (lat, lng) => {
     if (!mexicoPolygon.value) return false;
 
@@ -45,53 +43,51 @@ const isInsideMexico = (lat, lng) => {
     return false;
 };
 
-// Función para obtener el color del marcador según el tipo de problema
 const getMarkerColor = (problemType) => {
     let color;
     switch (problemType) {
         case 'Falta de agua':
-            color = 'grey'; // Gris
+            color = 'grey'; 
             break;
         case 'Solicitud de pipa':
-            color = 'red'; // Rojo
+            color = 'red'; 
             break;
         case 'Fuga de agua':
-            color = 'green'; // Verde
+            color = 'green'; 
             break;
         case 'Agua contaminada':
-            color = 'yellow'; // Amarillo
+            color = 'yellow'; 
             break;
         case 'Falta tapa en caja de válvula':
-            color = 'black'; // Negro
+            color = 'black';
             break;
         case 'Desbordamiento de aguas negras':
-            color = 'orange'; // Naranja
+            color = 'orange'; 
             break;
         case 'Coladera sin tapa':
-            color = 'violet'; // Púrpura
+            color = 'violet';
             break;
         case 'Socavón / Hundimiento':
-            color = 'brown'; // Marrón
+            color = 'brown'; 
             break;
         case 'Inundación / Encharcamiento':
-            color = 'fuchsia'; // Fucsia (Magenta)
+            color = 'fuchsia'; 
             break;
         case 'Drenaje tapado / coladera / Tubería':
-            color = 'silver'; // Plata (Gris claro)
+            color = 'silver'; 
             break;
         case 'Tomas Clandestinas':
-            color = 'blue'; // Azul
+            color = 'blue';
             break;
         default:
-            color = 'gray'; // Gris por defecto
+            color = 'gray'; 
             break;
     }
     return color;
 };
 
-// Función para actualizar el marcador con el color según la problemática
 const updateMarkerColor = (problemType) => {
-    const markerColor = getMarkerColor(problemType); // Obtener el color del marcador
+    const markerColor = getMarkerColor(problemType);
 
     const iconHtml = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="30" height="30">
@@ -102,31 +98,27 @@ const updateMarkerColor = (problemType) => {
     if (marker.value) {
         marker.value.setIcon(L.divIcon({
             className: "fa-marker",
-            html: iconHtml, // Actualiza el SVG con el color dinámico
-            iconSize: [30, 30], // Tamaño del icono
-            iconAnchor: [15, 30], // Ancla del icono
+            html: iconHtml,
+            iconSize: [30, 30], 
+            iconAnchor: [15, 30], 
         }));
     }
 };
 
-// Función para mover el mapa a la nueva ubicación
 const moveMapToLocation = (lat, lng) => {
     lat = parseFloat(lat);
     lng = parseFloat(lng);
 
-    // Si las coordenadas no son válidas, usar las coordenadas por defecto
     if (isNaN(lat) || isNaN(lng)) {
         console.error("Las coordenadas proporcionadas no son válidas:", lat, lng);
         return;
     }
-
-    // Si las coordenadas no están dentro de México, moverlas al centro de México
+    
     if (!isInsideMexico(lat, lng)) {
-        [lat, lng] = [19.432608, -99.133209];  // Coordenadas por defecto de México
+        [lat, lng] = [19.432608, -99.133209]; 
         console.warn("La ubicación debe estar dentro de México. Se ha movido al centro de México.");
     }
 
-    // Actualizar solo si las coordenadas son diferentes
     if (!marker.value || marker.value.getLatLng().lat !== lat || marker.value.getLatLng().lng !== lng) {
         marker.value.setLatLng([lat, lng]);
         map.value.setView([lat, lng], 12);
@@ -163,11 +155,13 @@ onMounted(async () => {
                 }
             }).addTo(map.value);
 
-            map.value.fitBounds(mexicoPolygon.value.getBounds());
+            const bounds = mexicoPolygon.value.getBounds();
+            map.value.fitBounds(bounds); 
+
+            map.value.setMaxBounds(bounds);
         })
         .catch(error => console.error("Error cargando el GeoJSON:", error));
 
-    // Crear el marcador inicial (por defecto, al centro de México)
     marker.value = L.marker([19.432608, -99.133209], {
         icon: L.divIcon({
             className: "fa-marker",
@@ -175,9 +169,9 @@ onMounted(async () => {
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="30" height="30">
                     <path fill="gray" d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
                 </svg>
-            `, // El icono SVG con color gris por defecto
-            iconSize: [30, 30], // Tamaño del icono
-            iconAnchor: [15, 30], // Ancla del icono
+            `, 
+            iconSize: [30, 30], 
+            iconAnchor: [15, 30], 
         })
     }).addTo(map.value);
 
@@ -200,8 +194,7 @@ onMounted(async () => {
     });
 });
 
-// Watcher para actualizar la ubicación del marcador
 watch(() => props.selectedProblem, (newProblemType) => {
-    updateMarkerColor(newProblemType); // Cambiar solo el color cuando se actualice la problemática
+    updateMarkerColor(newProblemType);
 });
 </script>

@@ -91,7 +91,6 @@ const searchLocationOnMap = async () => {
             mapComponent.value.moveMapToLocation(newLat, newLon, selectedProblem.value);
         }
 
-        // Llenar el municipio automáticamente
         await fetchMunicipality(newLat, newLon);
     }
 };
