@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+.mainContainer {
+  @apply flex flex-col bg-[#172554] h-screen overflow-y-auto w-full px-4;
+}
+
+.principalDiv {
+  @apply flex bg-[#3a4b84] flex-col w-full sm:w-10/12 md:w-8/12 lg:w-6/12 xl:w-4/10 h-full mx-auto flex-1 shadow-2xl rounded-2xl my-4;
+}
+
+.input-form {
+  @apply flex cursor-pointer items-center w-full bg-gray-300/40 text-white rounded-md p-2 my-2;
+}
+
+.btn-primary {
+  @apply bg-sky-600 cursor-pointer text-white font-bold py-2 px-3 rounded;
+}
